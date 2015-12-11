@@ -30,7 +30,7 @@
 
   <!-- Tells Spring to scan the classpath for component annotations so it can build the references. -->
   <context:component-scan
-    base-package="blackboard.platform.spring, blackboard.plugin.springdemo" />
+  	base-package="blackboard.platform.spring, bbdn.sample.lti11" />
 
   <!-- Configured datasource for the hibernate/jpa examples -->
   <bean id="hibernateDataSource" class="blackboard.platform.spring.jdbc.LearnDataSource"/>
@@ -40,7 +40,9 @@
 	<property name="dataSource" ref="hibernateDataSource" />
 	<property name="annotatedClasses">
 		<list>
-			<value>blackboard.plugin.springdemo.model.Foo</value>
+			<value>bbdn.sample.lti11.model.Properties</value>
+			<value>bbdn.sample.lti11.model.LinkConfig</value>
+			<value>bbdn.sample.lti11.model.GradeExchange</value>
 		</list>
 	</property>
   </bean>

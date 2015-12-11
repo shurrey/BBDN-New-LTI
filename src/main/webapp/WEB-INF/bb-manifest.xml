@@ -1,30 +1,145 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+/* Copyright (C) 2011, Blackboard Inc.
+ * All rights reserved.
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ *  - Redistributions of source code must retain the above copyright
+ *     notice, this list of conditions and the following disclaimer.
+ *
+ *  - Redistributions in binary form must reproduce the above copyright
+ *     notice, this list of conditions and the following disclaimer in the
+ *     documentation and/or other materials provided with the distribution.
+ *
+ *  - Neither the name of Blackboard Inc. nor the names of its contributors 
+ *     may be used to endorse or promote products derived from this 
+ *     software without specific prior written permission.
+ * 
+ * THIS SOFTWARE IS PROVIDED BY BLACKBOARD INC ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL BLACKBOARD INC. BE LIABLE FOR ANY
+ * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+ 
+/*
+ *	Author: 				Scott Hurrey
+ *	Description:			bb-manifest file for LTI 1.1 Launcher Building Block
+ *	Date Created:			06/17/2014
+ *	Comments:				
+ *	ToDo:					
+ */
+-->
 <manifest xmlns="http://www.blackboard.com/bb-manifest-plugin"
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-          xsi:schemaLocation="http://www.blackboard.com/bb-manifest-plugin http://fibbba.medu.com/xsd/bb-manifest-plugin.xsd">
+          xsi:schemaLocation="http://www.blackboard.com/bb-manifest-plugin https://bbprepo.blackboard.com/content/repositories/public/blackboard/platform/bb-manifest-plugin/9.1.201510.1171621">
   <plugin>
 
-    <name value="Spring Demo" />
-    <handle value="SpringDemo" />
-    <description value="Spring Demo" />
+    <name value="LTI 1.1" />
+    <handle value="lti11" />
+    <description value="Updated LTI 1.1 Building Block to use Spring, schema and a custom result handler" />
     <default-locale value="en_US" />
 
-    <version value="1.0" />
+    <version value="2.0.0" />
     <requires>
-      <bbversion value="9.1.130000.0" />
+      <bbversion value="9.1" />
     </requires>
 
     <vendor>
-      <id value="bb" />
-      <name value="Blackboard Inc." />
-      <url value="http://www.blackboard.com/" />
-      <description value="Blackboard Learn" />
+      <id value="bbdn" />
+      <name value="Blackboard Developer Network" />
+      <url value="https://www.blackboard.com" />
+      <description value="Blackboard Developer Network" />
     </vendor>
 
+	<!-- Custom content types defined by this extension -->
+    <content-handlers>
+      <content-handler>
+        <name value="LTI Content"/>
+        <handle value= "resource/x-bbap-lti11-content"/>
+        <http-actions>
+          <create value="/create"/>
+          <modify value="/modify"/>
+          <view value="/launch"/>
+        </http-actions>
+        <icons>
+          <toolbar value="images/bbapSmall.gif"/>
+          <listitem value="images/bbapLogo.gif"/>
+        </icons>
+        <types>
+         <type>
+          <action-type value="collaborate"/>
+          <create-text value="create"/>
+         </type>
+        </types>
+      </content-handler>
+    </content-handlers>
+    
     <schema-dirs>
-      <schema-dir dir-name="spring" />
+      <schema-dir dir-name="lti11" />
     </schema-dirs>
 
+    <http-actions>
+    	<config value="config" />
+    </http-actions>
+    
+    <!-- Tools defined by this extension -->
+    <application-defs>
+      <application handle="ltitools" type="shared" use-ssl="false" name="LTI Tools" can-allow-guest="false"
+        is-course-tool="true" is-group-tool="true" is-org-tool="true" is-sys-tool="true">
+        <description lang="en_US">LTI Tools - Blackboard API Sample Code</description>
+        <icons>
+         <small value="images/bbapSmall.gif"/>
+         <tree value="images/bbapSmall.gif"/>
+         <large value="images/bbapLogo.gif"/>
+        </icons>        
+        <links>
+          <link>
+            <type value="tool"/>
+            <name value="LTI Tool"/>
+            <url value="ltitool?tool_type=tool" />
+            <description value="LTI Tool" />
+            <icons>
+              <listitem value="images/bbapLogo.gif"/>
+            </icons>
+          </link>
+          <link>
+            <type value="course_tool"/>
+            <name value="LTI Course Tool"/>
+            <url value="ltitool?tool_type=course_tool" />
+            <description value="LTI Course Tool" />
+            <icons>
+              <listitem value="images/bbapLogo.gif"/>
+            </icons>
+          </link>
+          <link>
+            <type value="user_tool"/>
+            <name value="LTI User Tool"/>
+            <url value="ltitool?tool_type=user_tool" />
+            <description value="LTI User Tool" />
+            <icons>
+              <listitem value="images/bbapLogo.gif"/>
+            </icons>
+          </link>
+          <link>
+            <type value="system_tool"/>
+            <name value="Configure LTI Building Block"/>
+            <url value="config" />
+            <description value="Configure LTI Building Block" />
+            <icons>
+              <listitem value="images/bbapLogo.gif"/>
+            </icons>
+          </link>
+        </links>
+      </application>
+    </application-defs>
+    
     <permissions>
       <permission type="persist" name="*" actions="create,modify,delete,persist" />
       <permission type="attribute" name="user.*" actions="get,set" />
@@ -37,6 +152,9 @@
       <permission type="java.lang.RuntimePermission" name="createClassLoader" />
       <permission type="java.lang.RuntimePermission" name="setContextClassLoader" />
       <permission type="java.io.FilePermission" name="${java.home}/lib/*" actions="read" />
+      
+      <!--  We need a permission for every LTI Tool Provider Domain we intend to launch to from this Building Block -->
+      <permission type="blackboard.platform.blti.BasicLTIPermission" name="dr-chuck.com" actions="sendroles,sendemail,sendname" />
     </permissions>
 
   </plugin>
