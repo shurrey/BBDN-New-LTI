@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<schema xmlns="http://www.blackboard.com/bb-schema"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.blackboard.com/bb-schema http://fibbba.medu.com/xsd/bb-schema.xsd"
+		name="bbdn-lti11" license="Course Delivery">
+	<comment>This schema contains tables related to the LTI 2.0 Prototype B2.</comment>
+
+  	<!-- Remember, all custom schema elements must start with your vendor ID. -->
+  	<table name="bbdn_lti11_props">
+  		<comment>This table stores the global settings for the LTI 1.1 Building Block</comment>
+    
+    	<column name="pk1" data-type="bigint" nullable="false" identity="true" comment="This is the surrogate primary key for the table." />
+
+    	<column name="props_url" data-type="TEXT" nullable="true" comment="The tool provider launch URL" />
+	    
+	    <column name="props_postgrades_ind" data-type="CHAR(1)" nullable="false" comment="Allow configured tool providers to post grades." >
+    		<value-constraint name="bbdn_props_postgrades_i1">
+		    	<accepted-value value="Y"/>
+		    	<accepted-value value="N"/>
+			</value-constraint>
+    	</column>
+    
+	    <column name="props_senddata" data-type="int" nullable="false" comment="Default Value for User Data send permissions: 0=never, 1=SSL only, 2=any connection" >
+	    	<value-constraint name="bbdn_props_senddata_i1">
+			    <accepted-value value="0"/>
+			    <accepted-value value="1"/>
+			    <accepted-value value="2"/>
+			</value-constraint>
+	    </column>
+	
+	    <column name="props_sendrole_ind" data-type="CHAR(1)" nullable="false" comment="Default value for Send Role" >
+	    	<value-constraint name="bbdn_props_sendrole_i1">
+			    <accepted-value value="Y"/>
+			    <accepted-value value="N"/>
+			</value-constraint>
+	    </column>
+	    
+	    <column name="props_sendname_ind" data-type="CHAR(1)" nullable="false" comment="Default value for Send User name" >
+	    	<value-constraint name="bbdn_props_sendname_i1">
+			    <accepted-value value="Y"/>
+			    <accepted-value value="N"/>
+			</value-constraint>
+	    </column>
+	    
+	    <column name="props_sendemail_ind" data-type="CHAR(1)" nullable="false" comment="Default value for send email address" >
+	    	<value-constraint name="bbdn_props_sendemail_i1">
+			    <accepted-value value="Y"/>
+			    <accepted-value value="N"/>
+			</value-constraint>
+	    </column>
+	  	
+	    <column name="props_global_ind" data-type="CHAR(1)" nullable="false" comment="Can individual links overwrite default config" >
+	    	<value-constraint name="bbdn_props_global_i1">
+			    <accepted-value value="Y"/>
+			    <accepted-value value="N"/>
+			</value-constraint>
+	    </column>
+	    
+	    <column name="props_key" data-type="TEXT" nullable="true" comment="The tool provider key. This is provided by the Tool Provider in LTI 2.0" />
+	    
+	    <column name="props_secret" data-type="TEXT" nullable="true" comment="The tool provider shared secret. This is provided by the Tool Provider in LTI 2.0" />
+	    
+	    <column name="props_customparams" data-type="TEXT" nullable="true" comment="Name-Value pairs delimited by | to be sent by Blackboard to the Tool Provider" />
+	    
+	    <column name="props_idtypetosend" data-type="int" nullable="true" comment="Default Value for User Data send permissions: 0=never, 1=SSL only, 2=any connection" >
+	    	<value-constraint name="bbdn_props_idtype_i1">
+			    <accepted-value value="0"/>
+			    <accepted-value value="1"/>
+			    <accepted-value value="2"/>
+			</value-constraint>
+	    </column>
+	    
+	    <column name="props_userack_ind" data-type="CHAR(1)" nullable="true" comment="Display message before leaving Blackboard" >
+	    	<value-constraint name="bbdn_props_userack_i1">
+			    <accepted-value value="Y"/>
+			    <accepted-value value="N"/>
+			</value-constraint>
+	    </column>
+	    
+	    <column name="props_ackmsg" data-type="TEXT" nullable="true" comment="message to notify user that they are leaving Blackboard"/>
+    	
+	    <primary-key name="bbdn_lti11_props_pk" comment="This is the name of primary key constraint on column settings_id.">
+	      <columnref name="pk1" />
+	    </primary-key>
+	  
+	  </table>
+	  
+	  <table name="bbdn_lti11_gradebook">
+	  	<comment>This table contains the mapping between sourcedId and gradebook columnid</comment>
+	  	
+	    <column name="pk1" data-type="bigint" nullable="false" identity="true" comment="This is the surrogate primary key for the table." />
+	    
+	    <column name="sourcedid" data-type="VARCHAR(256)" nullable="false" comment="sourcedid" />
+	    
+	    <column name="course_contents_pk1" data-type="bigint" nullable="false" comment="Content Id" />
+	    
+	    <column name="gradebook_main_pk1" data-type="bigint" nullable="false" comment="Blackboard GradableItem Id" />
+		    
+	    <column name="course_user_pk1" data-type="bigint" nullable="false" comment="Blackboard CourseMembership Id" />
+		    
+	    <primary-key name="bbdn_lti11_gradebook_pk" comment="This is the name of primary key constraint on column pk1">
+	      <columnref name="pk1" />
+	    </primary-key>
+	    
+	    <foreign-key name="bbdn_lti11_gradebook_fk1" reference-table="course_contents" on-delete="cascade" comment="This is a foreign key referencing a primary key in the standard Blackboard COURSE_CONTENTS table, referential action cascade on delete (cascade) - all relevant entries will be deleted if the content item is deleted from the course.">
+	      <columnref name="course_contents_pk1" />
+	    </foreign-key>
+	    
+	    <foreign-key name="bbdn_lti11_gradebook_fk2" reference-table="gradebook_main" on-delete="cascade" comment="This is a foreign key referencing a primary key in the standard Blackboard GRADEBOOK_MAIN table, referential action cascade on delete (cascade) - all relevant entries will be deleted if the content item is deleted from the course.">
+	      <columnref name="gradebook_main_pk1" />
+	    </foreign-key>
+	  
+	  	<foreign-key name="bbdn_lti11_gradebook_fk3" reference-table="course_users" on-delete="cascade" comment="This is a foreign key referencing a primary key in the standard Blackboard COURSE_USERS table, referential action cascade on delete (cascade) - all relevant entries will be deleted if the content item is deleted from the course.">
+	      <columnref name="course_user_pk1" />
+	    </foreign-key>
+	  
+	  </table>
+	  
+	  <table name="bbdn_lti11_linkcfg">
+	  	<comment>This table contains the mapping between sourcedId and gradebook columnid</comment>
+	  	
+	    <column name="pk1" data-type="bigint" nullable="false" identity="true" comment="This is the surrogate primary key for the table." />
+	    
+	   	<column name="course_contents_pk1" data-type="bigint" nullable="false" comment="Content Id" />
+	    
+	    <column name="custom_config" data-type="TEXT" nullable="true" comment="JSON Object containing custom LTI link-level settings" />
+		    
+	    <primary-key name="bbdn_lti11_linkcfg_pk" comment="This is the name of primary key constraint on column pk1">
+	      <columnref name="pk1" />
+	    </primary-key>
+	    
+	    <foreign-key name="bbdn_lti11_linkcfg_fk1" reference-table="course_contents" on-delete="cascade" comment="This is a foreign key referencing a primary key in the standard Blackboard COURSE_CONTENTS table, referential action cascade on delete (cascade) - all relevant entries will be deleted if the content item is deleted from the course.">
+	      <columnref name="course_contents_pk1" />
+	    </foreign-key>
+	  
+	  </table>
+	  
+	  <post-schema-update>
+	        <sql-script name="insert_default_values.sql" comment="Populate global settings with secure defaults if not currently populated with data."/>
+	  </post-schema-update>
+  
+</schema>

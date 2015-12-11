@@ -1,0 +1,40 @@
+-- Populates the prefs table with default values if it has not been previously populated.
+--
+BEGIN;
+    INSERT INTO bbdn_lti11_props (
+		pk1,
+		props_url,
+		props_postgrades_ind,
+        props_senddata, 
+        props_sendrole_ind, 
+        props_sendname_ind, 
+        props_sendemail_ind, 
+        props_global_ind,
+        props_key,
+        props_secret,
+        props_customparams,
+        props_userack_ind, 
+        props_ackmsg,
+        props_idtypetosend
+	)
+	SELECT 
+		nextval('BBDN_LTI11_PROPS_SEQ'),
+		'http://dr-chuck.com/ims/php-simple/tool.php',
+		'N',
+        '0',
+        'N',
+        'N',
+        'N',
+        'N',
+        'key', 
+        'secret', 
+        '{}', 
+        'N',   
+        'You are now leaving Blackboard Learn.',
+        '2'
+	WHERE 
+    	NOT EXISTS (
+			SELECT * FROM bbdn_lti11_props
+		);
+    COMMIT;
+END;

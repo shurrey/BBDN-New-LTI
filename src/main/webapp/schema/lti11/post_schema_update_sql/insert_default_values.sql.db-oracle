@@ -1,0 +1,44 @@
+-- Populates the prefs table with default values if it has not been previously populated.
+--
+DECLARE
+   v_count integer;
+BEGIN
+  select count(*) into v_count from bbdn_lti11_props;
+  if ( v_count = 0 ) then
+    INSERT INTO bbdn_lti2_props (
+    	pk1,
+    	props_url,
+		props_postgrades_ind,
+        props_senddata, 
+        props_sendrole_ind, 
+        props_sendname_ind, 
+        props_sendemail_ind, 
+        props_global_ind,
+        props_key,
+        props_secret,
+        props_customparams,
+        props_userack_ind, 
+        props_ackmsg,
+        props_idtypetosend
+        )
+    VALUES (  
+		BBDN_LTI11_PROPS_SEQ.NEXTVAL,
+		'http://dr-chuck.com/ims/php-simple/tool.php',
+        'N',
+        '0',
+        'N',
+        'N',
+        'N',
+        'N',
+        'key', 
+        'secret', 
+        '{}', 
+        'N',   
+        'You are now leaving Blackboard Learn.',
+        '2'
+    );
+    COMMIT;
+    
+    END IF;
+END;
+
