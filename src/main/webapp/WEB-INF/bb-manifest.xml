@@ -64,9 +64,9 @@
         <name value="LTI Content"/>
         <handle value= "resource/x-bbap-lti11-content"/>
         <http-actions>
-          <create value="/create"/>
-          <modify value="/modify"/>
-          <view value="/launch"/>
+          <create value="create"/>
+          <modify value="modify"/>
+          <view value="launch"/>
         </http-actions>
         <icons>
           <toolbar value="images/bbapSmall.gif"/>
@@ -94,47 +94,30 @@
       <application handle="ltitools" type="shared" use-ssl="false" name="LTI Tools" can-allow-guest="false"
         is-course-tool="true" is-group-tool="true" is-org-tool="true" is-sys-tool="true">
         <description lang="en_US">LTI Tools - Blackboard API Sample Code</description>
-        <icons>
-         <small value="images/bbapSmall.gif"/>
-         <tree value="images/bbapSmall.gif"/>
-         <large value="images/bbapLogo.gif"/>
-        </icons>        
         <links>
           <link>
             <type value="tool"/>
             <name value="LTI Tool"/>
             <url value="ltitool?tool_type=tool" />
             <description value="LTI Tool" />
-            <icons>
-              <listitem value="images/bbapLogo.gif"/>
-            </icons>
           </link>
           <link>
             <type value="course_tool"/>
             <name value="LTI Course Tool"/>
             <url value="ltitool?tool_type=course_tool" />
             <description value="LTI Course Tool" />
-            <icons>
-              <listitem value="images/bbapLogo.gif"/>
-            </icons>
           </link>
           <link>
             <type value="user_tool"/>
             <name value="LTI User Tool"/>
             <url value="ltitool?tool_type=user_tool" />
             <description value="LTI User Tool" />
-            <icons>
-              <listitem value="images/bbapLogo.gif"/>
-            </icons>
           </link>
           <link>
             <type value="system_tool"/>
             <name value="Configure LTI Building Block"/>
             <url value="config" />
             <description value="Configure LTI Building Block" />
-            <icons>
-              <listitem value="images/bbapLogo.gif"/>
-            </icons>
           </link>
         </links>
       </application>

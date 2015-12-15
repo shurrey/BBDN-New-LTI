@@ -32,7 +32,7 @@
             
         </bbNG:pageHeader>
 
-       	<bbNG:form action ="saveltilink" method="POST" isSecure="${ true }" nonceId="/saveltilink">
+       	<bbNG:form action ="saveltilink" method="POST" isSecure="${ true }" type="application/x-www-form-urlencoded" nonceId="/saveltilink">
        	<input name="course_id" type="hidden" value="${course_id}" />
        	<input name="content_id" type="hidden" value="${content_id}" />
        	<input name="post_grades" type="hidden" value="${postGrades}" />

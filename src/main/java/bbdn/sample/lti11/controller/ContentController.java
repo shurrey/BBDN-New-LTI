@@ -1,5 +1,6 @@
 package bbdn.sample.lti11.controller;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -181,20 +182,54 @@ public class ContentController {
 		return mv;
 	}
 	
+	/*
+	 * blackboard.platform.security.NonceUtil.nonce:22a2e66f-b139-4bce-8cec-601906832a59
+	 * course_id:_3_1
+	 * content_id:_10_1
+	 * post_grades:false
+	 * link_config:true
+	 * top_Submit:Submit
+	 * name:Test Link
+	 * texttext_f:
+	 * texttext_w:
+	 * texttype:H
+	 * textbox_prefix:texttext
+	 * texttext:
+	 * availability:true
+	 * tracking:false
+	 * dateTimeRestrictions_start_date:12/15/2015
+	 * dateTimeRestrictions_start_datetime:2015-12-15 19:42:00
+	 * pickdate:
+	 * pickname:
+	 * dateTimeRestrictions_end_date:12/16/2015
+	 * dateTimeRestrictions_end_datetime:2015-12-16 20:42:00
+	 * pickdate:
+	 * pickname:
+	 * key:key
+	 * secret:secret
+	 * customParams:user_id=@X@user.id@X@
+	 * displaySplash:true
+	 * splashMsgtext_f:
+	 * splashMsgtext_w:
+	 * splashMsgtype:H
+	 * textbox_prefix:splashMsgtext
+	 * splashMsgtext:<p>You are now leaving Blackboard Learn.</p>
+	 */
+	
 	@RequestMapping("/saveltilink")
 	public void saveLtiLink(HttpServletRequest request, HttpServletResponse response,  
 			@RequestParam("course_id") String course_id, //
 			@RequestParam("content_id") String content_id, //
+			@RequestParam("post_grades") String postGrades, //
+			@RequestParam("link_config") String linkConfigAllowed, //
 			@RequestParam("name") String name, //
 			@RequestParam("texttext") String description, //
 			@RequestParam("availability") String availability, //
 			@RequestParam("tracking") String tracking, //
-			@RequestParam("dateTimeRestrictions_start_checkbox") String startDateSelected, //
+			// @RequestParam("dateTimeRestrictions_start_checkbox") String startDateSelected, //
 			@RequestParam("dateTimeRestrictions_start_date") String startDate, //
-			@RequestParam("dateTimeRestrictions_end_checkbox") String endDateSelected, //
+			// @RequestParam("dateTimeRestrictions_end_checkbox") String endDateSelected, //
 			@RequestParam("dateTimeRestrictions_end_date") String endDate, //
-			@RequestParam("post_grades") String postGrades, //
-			@RequestParam("link_config") String linkConfigAllowed, //
 			@RequestParam("key") String key, //
 			@RequestParam("secret") String secret, //
 			@RequestParam("customParams") String customParams, //
@@ -228,6 +263,9 @@ public class ContentController {
 		courseDoc.setCourseId( courseId );
 		courseDoc.setParentId( folderId );
 		courseDoc.setTitle( name );
+		String path="launch?content_id=@X@content.id@X@&course_id=@X@course.id@X@";
+		String launchHtml = "<p>Click <a href=\"" + PlugInUtil.getUri("bbdn", "lti11", path) + " target=\"_blank\">here</a> to launch LTI link.</p>"; 
+		description = launchHtml+description;
 		courseDoc.setBody( FormattedText.toFormattedText(description));
 
 		if(!tempCustomParams.isEmpty()) {
@@ -243,13 +281,13 @@ public class ContentController {
 			courseDoc.setExtendedData(ed);
 		}
 		courseDoc.setIsAvailable(Boolean.parseBoolean(availability));
-		if(startDateSelected.equalsIgnoreCase("1")) {
-			courseDoc.setStartDate(DatePickerUtil.getDateFromPicker(startDateSelected, startDate));
-		}
+		//if(startDateSelected.equalsIgnoreCase("1")) {
+		//	courseDoc.setStartDate(DatePickerUtil.getDateFromPicker(startDateSelected, startDate));
+		//}
 		
-		if(endDateSelected.equalsIgnoreCase("1")) {
-			courseDoc.setEndDate(DatePickerUtil.getDateFromPicker(endDateSelected, endDate));
-		}
+		//if(endDateSelected.equalsIgnoreCase("1")) {
+		//	courseDoc.setEndDate(DatePickerUtil.getDateFromPicker(endDateSelected, endDate));
+		//}
 		
 		courseDoc.setIsTracked(Boolean.parseBoolean(tracking));
 		
@@ -300,6 +338,12 @@ public class ContentController {
 		/* @SuppressWarnings("unchecked")
 		Map<String,String> map = request.getParameterMap();
 		*/
+		try {
+			response.sendRedirect(PlugInUtil.getDisplayContentReturnURL(courseDoc.getId(), courseId));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	@RequestMapping("/launch")
@@ -352,12 +396,18 @@ public class ContentController {
 		 */
 		 	 	
 	 	HashMap<String,String> customParamMap = HashMapConverter.convertToStringToHashMap(customParams);
+	 	HashMap<String,String> launchPresentationInfo = new HashMap<String,String>();
+	 	
+	 	launchPresentationInfo.put("locale", "en-US");
+	 	launchPresentationInfo.put("return_url", PlugInUtil.getDisplayContentReturnURL(contentId, courseId));
 	 
 		BasicLTILauncher launcher = new BasicLTILauncher( url, key, secret, "ContentId: " + contentId )
 	       .addResourceLinkInformation( "LTI Content Handler - ContentId: ", "LTI Connection utilizing the Blackboard Learn LTI API Framework" )
 	       .addCurrentUserInformation( sendRole, sendName, sendEmail, idTypeToSend )
 	       .addCurrentCourseInformation(idTypeToSend)
-		   .addCustomToolParameters( customParamMap );
+		   .addCustomToolParameters( customParamMap )
+		   .addProductInformation()
+		   .addLaunchPresentationInformation(launchPresentationInfo);
 		
 		if( postGrades ) {
 			String sourcedId = null;
